@@ -34,6 +34,7 @@ class Board:
             x = 0
             for value in line.split():
                 self.board[y][x] = Square((x, y), int(value))
+                self.open.append((x,y))
                 x += 1
 
             y += 1
@@ -55,7 +56,7 @@ class Board:
         x, y = loc
 
         if (x >= 0 and x < 5 and y >= 0 and y < 5):
-            return self.board[x][y]
+            return self.board[y][x]
         else:
             return None
     

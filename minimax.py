@@ -11,14 +11,9 @@ def calculate_minimax(curr_team, evil_team, board , depth, curr_value, evil_valu
     max_team = 'green'
     # make deep copy of the board to work with, so earlier paths don't alter new paths
     grid = deepcopy(board)
-
     # root search node hasn't altered anything yet
     if depth == 0:
-        if curr_team == max_team:
-            print (grid.open)
-            return max(calculate_minimax(evil_team, curr_team, grid, depth+1, evil_value, curr_value, next) for next in grid.open)
-        else:
-            return min(calculate_minimax(evil_team, curr_team, grid, depth+1, evil_value, curr_value, next) for next in grid.open)
+            return max(calculate_minimax(curr_team, evil_team, grid, depth+1, curr_value, evil_value, next) for next in grid.open)
     # Mark the location as captured
     # loc refers to the square in board, but we want to equivalent square in grid to alter
     square = grid.square_at(loc)
@@ -45,21 +40,14 @@ def calculate_minimax(curr_team, evil_team, board , depth, curr_value, evil_valu
                     curr_value += evil.value
                     evil_value -= evil.value
                     evil.team = curr_team
-        break
+            break
     # we just took this square, mark it as current players and add its value to their score
     curr_value += square.value
     square.team = curr_team
-    if depth >= max_depth:
-        # return [heuristic value, square used]
+    if depth >= max_depth or len(grid.open) == 0:
+        # return [heuristic value, square used,max_team value, min_team value]
         # max_team wants (max_value - min_value) to be as large as possible, min_team wants it to be as small as possible
-        if(curr_team == max_team):
-            return [curr_value - evil_value, square.loc]
-        else:
-            return [evil_value - curr_value, square.loc]
+        return [curr_value - evil_value, square.loc, curr_value, evil_value]
     else:
-        if curr_team == max_team:
-            return max(calculate_minimax(evil_team, curr_team, grid, depth+1, evil_value, curr_value, next) for next in grid.open)
-        else:
-            return min(calculate_minimax(evil_team, curr_team, grid, depth+1, evil_value, curr_value, next) for next in grid.open)
-
+        return max(calculate_minimax(evil_team, curr_team, grid, depth+1, evil_value, curr_value, next) for next in grid.open)
 
