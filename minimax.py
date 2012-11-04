@@ -9,29 +9,31 @@ def calculate_minimax(curr_team, evil_team, board , depth, curr_value, evil_valu
     # define constants
     max_depth = 3
     max_team = 'green'
-    # make deep copy of the board to work with, so earlier paths dont alter new paths
+    # make deep copy of the board to work with, so earlier paths don't alter new paths
     grid = deepcopy(board)
     # loc refers to the square in board, but we want to equivalent square in grid to alter
     square = grid.square_at(loc)
     # root search node hasn't altered anything yet
     if depth == 0:
         if curr_team == max_team:
-            return max(calculate_minimax(evil_team, curr_team, grid, depth+1, evil_value, curr_value, next.loc) for next in grid)
+            return max(calculate_minimax(evil_team, curr_team, grid, depth+1, evil_value, curr_value, next) for next in grid.open)
         else:
-            return min(calculate_minimax(evil_team, curr_team, grid, depth+1, evil_value, curr_value, next.loc) for next in grid)
-    # if its not free, we can't directly capture it
-    if square.team != None:
-        return None
+            return min(calculate_minimax(evil_team, curr_team, grid, depth+1, evil_value, curr_value, next) for next in grid.open)
+    # Mark the location as captured
+    capture(loc)
     # we treat each square as a Para-Drop, then we check to see if it has any neighbors that belong
     # to the current team...it is more advantageous to Death Blitz whenever possible
-    for neighbor in square.left, square.right, square.up, square.down:
+    x = loc[0]
+    y = loc[1]
+    all_neighbors = [grid.square_at((x+1, y)), grid.square_at((x-1,y)), grid.square_at((x,y+1)), grid.square_at((x,y-1))]
+    for neighbor in all_neighbors:
         # check for wall
         if not neighbor:
             continue
         # check if we have a neighbor on our side (we only need one neighbor)
         if neighbor.team == curr_team:
             # check the neighbors for ones on the enemy team
-            for evil in square.left, square.right, square.up, square.down:
+            for evil in all_neighbors:
                 if not evil:
                     continue
                 if evil.team == evil_team:
@@ -45,17 +47,17 @@ def calculate_minimax(curr_team, evil_team, board , depth, curr_value, evil_valu
     # we just took this square, mark it as current players and add its value to their score
     curr_value += square.value
     square.team = curr_team
-if depth >= max_depth:
-    # return [heuristic value, square used]
-    # max_team wants (max_value - min_value) to be as large as possible, min_team wants it to be as small as possible
-    if(curr_team == max_team):
-        return [curr_value - evil_value, square.loc]
+    if depth >= max_depth:
+        # return [heuristic value, square used]
+        # max_team wants (max_value - min_value) to be as large as possible, min_team wants it to be as small as possible
+        if(curr_team == max_team):
+            return [curr_value - evil_value, square.loc]
+        else:
+            return [evil_value - curr_value, square.loc]
     else:
-        return [evil_value - curr_value, square.loc]
-else:
-    if curr_team == max_team:
-        return max(calculate_minimax(evil_team, curr_team, grid, depth+1, evil_value, curr_value, next.loc) for next in grid)
-    else:
-        return min(calculate_minimax(evil_team, curr_team, grid, depth+1, evil_value, curr_value, next.loc) for next in grid)
+        if curr_team == max_team:
+            return max(calculate_minimax(evil_team, curr_team, grid, depth+1, evil_value, curr_value, next) for next in grid.open)
+        else:
+            return min(calculate_minimax(evil_team, curr_team, grid, depth+1, evil_value, curr_value, next) for next in grid.open)
 
 

@@ -25,8 +25,7 @@ class Board:
         #Initialize all the variables.
         board = open(fileName, 'r').readlines()
         self.board = [[0]*5 for i in range(5)]
-        self.open = {}
-        self.taken = {}
+        self.open = []
         self.playerpoints = [0, 0]
         
         x = 0
@@ -40,7 +39,7 @@ class Board:
                 else:
                     points = int(''.join(temp))     # Turn the list into an integer
                     self.board[i][x] = Square((i,x), points)    # Then add the integer
-                    self.open[(i,x)] = points
+                    self.open.append(points)
                     temp = []
                     x += 1
             x = 0
@@ -53,24 +52,32 @@ class Board:
             ret += '\n'
         return ret
     
-    def getTeam(self, loc):
-        return self.board[loc[0]][loc[1]].team
+    def square_at(self, loc):
+        x = loc[0]
+        y = loc[1]
+        if (x >= 0 and x < 5 and y >= 0 and y < 5):
+            return self.board[x][y]
+        else:
+            return None
     
-    def getValue(self, loc):
-        return self.board[loc[0]][loc[1]].value
-    
-    def capture(self, loc, player):
-        self.board[loc[0]][loc[1]].team = player
+    def capture(self, loc):
+        self.open.remove(loc)
 
 class Square:
     def __init__(self, loc, value):
+        x = loc[0]
+        y = loc[1]
         self.loc = loc
         self.value = value
         self.team = None
+        
+        self.up = (x+1, y)
     
     def __str__(self):
         return str((self.value, self.team))
 
 
-test = Board("Punxsutawney.txt")
+test = Board("Game boards/Punxsutawney.txt")
 print(test)
+print(test.square_at((0,4)))
+print(test.square_at((5,1)))
