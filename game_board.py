@@ -28,21 +28,15 @@ class Board:
         self.open = []
         self.playerpoints = [0, 0]
         
-        x = 0
-        temp = []
         # Parse the board by turning it into an array.
-        for i in range(len(board)):
-            for j in range(len(board[i])):
-                # If the character given is a number
-                if board[i][j] != '\t' and board[i][j] != '\n':
-                    temp.append(board[i][j])        # Add the number to the list
-                else:
-                    points = int(''.join(temp))     # Turn the list into an integer
-                    self.board[i][x] = Square((i,x), points)    # Then add the integer
-                    self.open.append(points)
-                    temp = []
-                    x += 1
+        y = 0
+        for line in board:
             x = 0
+            for value in line.split():
+                self.board[y][x] = Square((x, y), int(value))
+                x += 1
+
+            y += 1
         
     def __str__(self):
         ret = ''
@@ -53,10 +47,9 @@ class Board:
         return ret
 
     def __iter__(self):
-        for row in range(len(self.board[0])):
-            for col in range(len(self.board)):
-                yield self.square_at((col, row))
-                
+        for row in self.board:
+            for square in row:
+                yield square
     
     def square_at(self, loc):
         x, y = loc
