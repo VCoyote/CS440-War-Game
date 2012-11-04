@@ -6,7 +6,10 @@ screen = pygame.display.set_mode((1024, 800))
 clock = pygame.time.Clock()
 
 # load assets
-grass = pygame.image.load('img/grass.png')
+grass    = pygame.image.load('img/grass.png')
+team1 = pygame.image.load('img/princess.png')
+team2 = pygame.image.load('img/bug.png')
+
 font = pygame.font.SysFont('Arial', 26, bold=True)
 
 # constants
@@ -20,6 +23,12 @@ def render_square(square):
     # render background
     pos = sr.move(sr.w*col, sr.h*row)
     screen.blit(grass, pos)
+
+    # render team
+    if square.team == 1:
+        screen.blit(team1, pos)
+    elif square.team == 2:
+        screen.blit(team2, pos)
 
     # render points
     pos = pos.move(sr.w/2, sr.h)
