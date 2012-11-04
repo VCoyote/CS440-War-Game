@@ -2,6 +2,7 @@
 # Grid contains a 5 by 5 array of Squares, each of which has a value, a team, and a location (and pointers to adjacent Squares?)
 # Grid has the function square_at((int,int), which returns a reference to the Square a that location in the grid
 
+#prune must be reset to None before ab pruning commences
 global prune = None
 #   calculate_abprune(string,string,Grid,int,int,int,Square) returns the heuristic value and location of the best choice
 #   for the next move of the game
@@ -27,7 +28,9 @@ def calculate_abprune(curr_team, evil_team, board , depth, curr_value, evil_valu
     x = loc[0]
     y = loc[1]
     all_neighbors = [grid.square_at((x+1, y)), grid.square_at((x-1,y)), grid.square_at((x,y+1)), grid.square_at((x,y-1))]
-    for neighbor in all_neighbors:        # check for wall
+
+    for neighbor in all_neighbors:
+        # check for wall
         if not neighbor:
             continue
         # check if we have a neighbor on our side (we only need one neighbor)
@@ -56,24 +59,34 @@ def calculate_abprune(curr_team, evil_team, board , depth, curr_value, evil_valu
             return [evil_value - curr_value, square.loc]
     else:
         if curr_team == max_team:
+            #search through each possible next move 
             for next in grid.open:
                 retval = calculate_abprune(evil_team, curr_team, grid, depth+1, evil_value, curr_value, next)
-                if retval[0] > prune:
-                    return None
+                #if the value is above prune (and if prune has been set yet)
+                #then min will never pick this route, throw it out
+                if prune:
+                    if retval[0] > prune:
+                        return None
                 if not best_square:
                     best_square = retval
+                #if the result is higher than our previous max, make it the new max
                 if retval[0] > best_square[0]:
                     best_square = retval
+            #our new best choice is where we prune from
             prune = best_square[0]
             return best_square
         else:            
             for next in grid.open:
                 retval = calculate_abprune(evil_team, curr_team, grid, depth+1, evil_value, curr_value, next)
-                if retval[0] < prune:
-                    return None
+                #if the value is below prune, max will never pick it, so throw it out
+                if prune:
+                    if retval[0] < prune:
+                        return None
                 if not best_square:
                     best_square = retval
+                #if the result is lower than our previous min, make it the new min
                 if retval[0] < best_square[0]:
                     best_square = retval
+            #our selection is the new prune
             prune = best_square[0]
             return best_square
