@@ -45,16 +45,22 @@ class Board:
             x = 0
         
     def __str__(self):
-        ret = ""
+        ret = ''
         for i in range(len(self.board)):
             for j in range(len(self.board[i])):
                 ret += str(self.board[i][j]) + '\t'
             ret += '\n'
         return ret
+
+    def __iter__(self):
+        for row in range(len(self.board[0])):
+            for col in range(len(self.board)):
+                yield self.square_at(self, (col, row))
+                
     
     def square_at(self, loc):
-        x = loc[0]
-        y = loc[1]
+        x, y = loc
+
         if (x >= 0 and x < 5 and y >= 0 and y < 5):
             return self.board[x][y]
         else:
@@ -65,14 +71,11 @@ class Board:
 
 class Square:
     def __init__(self, loc, value):
-        x = loc[0]
-        y = loc[1]
+        x, y = loc
         self.loc = loc
         self.value = value
         self.team = None
         
-        self.up = (x+1, y)
-    
     def __str__(self):
         return str((self.value, self.team))
 
