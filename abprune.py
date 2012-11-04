@@ -17,22 +17,23 @@ def calculate_abprune(curr_team, evil_team, board , depth, curr_value, evil_valu
     # root search node hasn't altered anything yet
     if depth == 0:       
         if curr_team == max_team:
-            return max(calculate_minimax(evil_team, curr_team, grid, depth+1, evil_value, curr_value, next.loc) for next in grid)
+            return max(calculate_minimax(evil_team, curr_team, grid, depth+1, evil_value, curr_value, next) for next in grid.open)
         else:
-            return min(calculate_minimax(evil_team, curr_team, grid, depth+1, evil_value, curr_value, next.loc) for next in grid)
-    # if its not free, we can't directly capture it
-    if square.team != None:
-        return None
+            return min(calculate_minimax(evil_team, curr_team, grid, depth+1, evil_value, curr_value, next) for next in grid.open)
+    # Mark the location as captured
+    grid.capture(loc)
     # we treat each square as a Para-Drop, then we check to see if it has any neighbors that belong
     # to the current team...it is more advantageous to Death Blitz whenever possible
-    for neighbor in square.left, square.right, square.up, square.down:
-        # check for wall
+    x = loc[0]
+    y = loc[1]
+    all_neighbors = [grid.square_at((x+1, y)), grid.square_at((x-1,y)), grid.square_at((x,y+1)), grid.square_at((x,y-1))]
+    for neighbor in all_neighbors:        # check for wall
         if not neighbor:
             continue
         # check if we have a neighbor on our side (we only need one neighbor)
         if neighbor.team == curr_team:
             # check the neighbors for ones on the enemy team
-            for evil in square.left, square.right, square.up, square.down:
+            for evil in all_neighbors:
                 if not evil:
                     continue
                 if evil.team == evil_team:
@@ -55,8 +56,8 @@ def calculate_abprune(curr_team, evil_team, board , depth, curr_value, evil_valu
             return [evil_value - curr_value, square.loc]
     else:
         if curr_team == max_team:
-            for next in grid:
-                retval = calculate_abprune(evil_team, curr_team, grid, depth+1, evil_value, curr_value, next.loc)
+            for next in grid.open:
+                retval = calculate_abprune(evil_team, curr_team, grid, depth+1, evil_value, curr_value, next)
                 if retval[0] > prune:
                     return None
                 if not best_square:
@@ -66,8 +67,8 @@ def calculate_abprune(curr_team, evil_team, board , depth, curr_value, evil_valu
             prune = best_square[0]
             return best_square
         else:            
-            for next in grid:
-                retval = calculate_abprune(evil_team, curr_team, grid, depth+1, evil_value, curr_value, next.loc)
+            for next in grid.open:
+                retval = calculate_abprune(evil_team, curr_team, grid, depth+1, evil_value, curr_value, next)
                 if retval[0] < prune:
                     return None
                 if not best_square:
