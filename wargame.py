@@ -2,10 +2,12 @@
 from game_board import Board
 from render_game import render_game, pygame, clock
 from minimax import calculate_minimax
+from copy import deepcopy
 
 board = Board('boards/Punxsutawney.txt')
 print(board)
 
+print (calculate_minimax('green','blue',board, 0, 0,0,None))
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:

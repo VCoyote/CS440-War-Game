@@ -2,7 +2,7 @@
 # Grid contains a 5 by 5 array of Squares, each of which has a value, a team, and a location (and pointers to adjacent Squares?)
 # Grid has the function square_at((int,int), which returns a reference to the Square a that location in the grid
 
-
+from copy import deepcopy
 #   calculate_minimax(string,string,Grid,int,int,int,Square) returns the heuristic value and location of the best choice
 #   for the next move of the game
 def calculate_minimax(curr_team, evil_team, board , depth, curr_value, evil_value, loc):
@@ -11,15 +11,17 @@ def calculate_minimax(curr_team, evil_team, board , depth, curr_value, evil_valu
     max_team = 'green'
     # make deep copy of the board to work with, so earlier paths don't alter new paths
     grid = deepcopy(board)
-    # loc refers to the square in board, but we want to equivalent square in grid to alter
-    square = grid.square_at(loc)
+
     # root search node hasn't altered anything yet
     if depth == 0:
         if curr_team == max_team:
+            print (grid.open)
             return max(calculate_minimax(evil_team, curr_team, grid, depth+1, evil_value, curr_value, next) for next in grid.open)
         else:
             return min(calculate_minimax(evil_team, curr_team, grid, depth+1, evil_value, curr_value, next) for next in grid.open)
     # Mark the location as captured
+    # loc refers to the square in board, but we want to equivalent square in grid to alter
+    square = grid.square_at(loc)
     grid.capture(loc)
     # we treat each square as a Para-Drop, then we check to see if it has any neighbors that belong
     # to the current team...it is more advantageous to Death Blitz whenever possible
