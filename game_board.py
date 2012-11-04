@@ -77,7 +77,9 @@ class Square:
         return str((self.value, self.team))
 
 
-test = Board("Game boards/Punxsutawney.txt")
-print(test)
-print(test.square_at((0,4)))
-print(test.square_at((5,1)))
+# Testing
+if __name__ == '__main__':
+    test = Board('Game boards/Punxsutawney.txt')
+    print(test)
+    print(test.square_at((0,4)))
+    print(test.square_at((5,1)))
