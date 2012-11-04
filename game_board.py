@@ -55,7 +55,7 @@ class Board:
     def __iter__(self):
         for row in range(len(self.board[0])):
             for col in range(len(self.board)):
-                yield self.square_at(self, (col, row))
+                yield self.square_at((col, row))
                 
     
     def square_at(self, loc):
