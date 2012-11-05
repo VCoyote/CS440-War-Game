@@ -26,7 +26,8 @@ class Board:
         board = open(fileName, 'r').readlines()
         self.board = [[0]*5 for i in range(5)]
         self.open = []
-        self.playerpoints = [0, 0]
+        self.greenpoints = 0
+        self.bluepoints = 0
         
         # Parse the board by turning it into an array.
         y = 0

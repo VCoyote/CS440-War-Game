@@ -5,15 +5,18 @@
 from copy import deepcopy
 #   calculate_minimax(string,string,Grid,int,int,int,Square) returns the heuristic value and location of the best choice
 #   for the next move of the game
-def calculate_minimax(curr_team, evil_team, board , depth, curr_value, evil_value, loc):
+def calculate_minimax(curr_team, evil_team, board , depth, loc):
     # define constants
-    max_depth = 3
+    max_depth = 1
     max_team = 'green'
     # make deep copy of the board to work with, so earlier paths don't alter new paths
     grid = deepcopy(board)
     # root search node hasn't altered anything yet
     if depth == 0:
-            return max(calculate_minimax(curr_team, evil_team, grid, depth+1, curr_value, evil_value, next) for next in grid.open)
+        if curr_team == max_team:
+            return max(calculate_minimax(curr_team, evil_team, grid, depth+1, next) for next in grid.open)
+        else:
+            return min(calculate_minimax(curr_team, evil_team, grid, depth+1, next) for next in grid.open)
     # Mark the location as captured
     # loc refers to the square in board, but we want to equivalent square in grid to alter
     square = grid.square_at(loc)
@@ -37,17 +40,29 @@ def calculate_minimax(curr_team, evil_team, board , depth, curr_value, evil_valu
                     # we have conquered an enemy square, add its value to the current player's score,
                     # subtract the value from the evil player's score, and mark the square as belonging to
                     # the current team
-                    curr_value += evil.value
-                    evil_value -= evil.value
+                    if curr_team == max_team:
+                        grid.greenpoints += evil.value
+                        grid.bluepoints -= evil.value
+                    else:
+                        grid.greenpoints -= evil.value
+                        grid.bluepoints += evil.value
                     evil.team = curr_team
             break
     # we just took this square, mark it as current players and add its value to their score
-    curr_value += square.value
+    if curr_team == max_team:
+        grid.greenpoints += square.value
+    else:
+        grid.bluepoints += square.value
     square.team = curr_team
     if depth >= max_depth or len(grid.open) == 0:
         # return [heuristic value, square used,max_team value, min_team value]
         # max_team wants (max_value - min_value) to be as large as possible, min_team wants it to be as small as possible
-        return [curr_value - evil_value, square.loc, curr_value, evil_value]
+        return [grid.greenpoints - grid.bluepoints, square.loc]
     else:
-        return max(calculate_minimax(evil_team, curr_team, grid, depth+1, evil_value, curr_value, next) for next in grid.open)
+        if curr_team == max_team:
+            retval = max(calculate_minimax(evil_team, curr_team, grid, depth+1, next) for next in grid.open)
+            return retval
+        else:
+            retval = min(calculate_minimax(evil_team, curr_team, grid, depth+1, next) for next in grid.open)
+            return retval
 
