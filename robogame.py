@@ -17,7 +17,7 @@ if DEBUG_AI:
 
     # debug abpruning
     debug_ai(board, calculate_abprune)
-
+turn = 1
 while True:
     current_turn = board.turn
 
@@ -30,27 +30,28 @@ while True:
 
     # if ai can make a move, do it
     if current_turn == 'blue':
-        depth = 5 - (len(board.open)/10)
+        depth = 4
         move = calculate_abprune('blue', 'green', board, depth )
         to_capture = move[1]
-
         try: 
             board.blitz(to_capture,current_turn)
         except BlitzError:
             board.drop(to_capture,current_turn)
         board.next_turn()
+        print 'blue'
     else:
-        depth = 5 - (len(board.open)/10)
+        depth = 4
         move = calculate_abprune('green', 'blue', board, depth)
         to_capture = move[1]
-
         try: 
             board.blitz(to_capture,current_turn)
         except BlitzError:
             board.drop(to_capture,current_turn)
         board.next_turn()
+        print 'green'
+        
 
     render_game(board)
 	
     pygame.display.flip()
-    clock.tick(300)
+    clock.tick(30)

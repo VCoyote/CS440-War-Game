@@ -17,7 +17,7 @@ if DEBUG_AI:
 
     # debug abpruning
     debug_ai(board, calculate_abprune)
-
+depth = 4
 while True:
     current_turn = board.turn
 
@@ -31,7 +31,7 @@ while True:
     # if ai can make a move, do it
     if current_turn == 'blue':
         print('ai')
-        move = calculate_abprune('blue', 'green', board, 3)
+        move = calculate_abprune('blue', 'green', board, depth)
         to_capture = move[1]
 
         try: 
