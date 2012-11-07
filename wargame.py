@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
-from game_board import Board
 from render_game import render_game, pygame, clock, mouse_move, mouse_down, mouse_up
+from game_board import Board, BlitzError
 from minimax import calculate_minimax
 from abprune import calculate_abprune
 from debug_ai import debug_ai
@@ -35,10 +35,13 @@ while True:
     # if ai can make a move, do it
     if current_turn == 'blue':
         print('ai')
-        move = calculate_abprune('blue', 'green', board)
+        move = calculate_abprune('blue', 'green', board, 3)
         to_capture = move[1]
 
-        board.capture(to_capture, team='blue')
+        try: 
+            board.blitz(to_capture,current_turn)
+        except BlitzError:
+            board.drop(to_capture,current_turn)
         board.next_turn()
 
         # processing may take a while, so prevent a huge even queue from filling up

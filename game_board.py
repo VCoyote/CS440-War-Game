@@ -95,6 +95,7 @@ class Board:
 
 
 
+
     def blitz(self, loc, team = None):
         ''' move team onto an empty adjacent square, taking over adjacent enemy squares '''
         square = self.square_at(loc)
@@ -117,7 +118,7 @@ class Board:
                 adj_team = True
 
         if not adj_team:
-            raise Error('Blitzing square does not have adjacent team square')
+            raise BlitzError('Blitzing square does not have adjacent team square')
 
         # do the blitz
         self.capture(square.loc, team=team)
@@ -126,7 +127,7 @@ class Board:
         for dir in (0, 1), (1, 0), (-1, 0), (0, -1):
             adj = self.square_at((square.loc[0]+dir[0], square.loc[1]+dir[1]))
 
-            if adj and adj.team != team:
+            if adj and adj.team and adj.team != team:
                 self.capture(adj.loc, team)
 
     def next_turn(self):
@@ -144,6 +145,10 @@ class Square:
         
     def __str__(self):
         return str((self.value, self.team))
+
+
+class BlitzError (Exception):
+    pass
 
 
 # Testing
