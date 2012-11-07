@@ -94,6 +94,8 @@ def mouse_move(pos, board):
     # only show preview on empty squares
     if square and not square.team:
         preview_square = square.loc
+    else:
+        preview_square = None
 
 
 def mouse_up(pos, board):
@@ -113,6 +115,8 @@ def mouse_up(pos, board):
         board.blitz(square.loc, team='green')
     elif not square.team:
         board.drop(square.loc, team='green')
+    else:
+        return
 
     board.next_turn()
     preview_square, click_start = None, None

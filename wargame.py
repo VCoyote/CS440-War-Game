@@ -18,7 +18,7 @@ if DEBUG_AI:
     # debug abpruning
     debug_ai(board, calculate_abprune)
 
-while True:
+while board.open:
     current_turn = board.turn
 
     for event in pygame.event.get():
@@ -34,20 +34,23 @@ while True:
 
     # if ai can make a move, do it
     if current_turn == 'blue':
-        print('ai')
         move = calculate_abprune('blue', 'green', board, 3)
         to_capture = move[1]
 
         try: 
-            board.blitz(to_capture,current_turn)
+            board.blitz(to_capture, current_turn)
         except BlitzError:
-            board.drop(to_capture,current_turn)
+            board.drop(to_capture, current_turn)
         board.next_turn()
 
-        # processing may take a while, so prevent a huge even queue from filling up
+        # processing may take a while, so prevent a huge event queue from filling up
         pygame.event.clear()
 
     render_game(board)
 	
     pygame.display.flip()
     clock.tick(30)
+
+# let user see score until a button is pressed
+pygame.event.set_blocked(pygame.MOUSEMOTION)
+pygame.event.wait()
