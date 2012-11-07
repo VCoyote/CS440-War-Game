@@ -4,11 +4,21 @@ from game_board import Board, BlitzError
 from minimax import calculate_minimax
 from abprune import calculate_abprune
 from debug_ai import debug_ai
-import sys
+import sys, argparse
 
+# constants
 DEBUG_AI = False
 
-board = Board('boards/Punxsutawney.txt')
+# get board
+args = argparse.ArgumentParser()
+args.add_argument('-b', '--board', help='specify a custom board', type=str)
+args = args.parse_args()
+
+board_file = 'boards/Punxsutawney.txt'
+if args.board:
+    board_file = args.board
+
+board = Board(board_file)
 print(board)
 
 if DEBUG_AI:
