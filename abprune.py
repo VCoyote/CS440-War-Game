@@ -49,23 +49,23 @@ def calculate_abprune(curr_team, evil_team, board , depth = 0, loc = None):
                     # subtract the value from the evil player's score, and mark the square as belonging to
                     # the current team
                     if curr_team == max_team:
-                        grid.greenpoints += evil.value
-                        grid.bluepoints -= evil.value
+                        grid.points['green'] += evil.value
+                        grid.points['blue'] -= evil.value
                     else:
-                        grid.greenpoints -= evil.value
-                        grid.bluepoints += evil.value
+                        grid.points['green'] -= evil.value
+                        grid.points['blue'] += evil.value
                     evil.team = curr_team
             break
     #we just took this square, mark it as current players and add its value to their score
     if curr_team == max_team:
-        grid.greenpoints += square.value
+        grid.points['green'] += square.value
     else:
-        grid.bluepoints += square.value
+        grid.points['blue'] += square.value
     square.team = curr_team
     if depth >= max_depth or len(grid.open) == 0:
         # return [heuristic value, square used,max_team value, min_team value]
         # max_team wants (max_value - min_value) to be as large as possible, min_team wants it to be as small as possible
-        return [grid.greenpoints - grid.bluepoints, square.loc]
+        return [grid.points['green'] - grid.points['blue'], square.loc]
     else:
         if curr_team == max_team:
             #search through each possible next move 

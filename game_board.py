@@ -28,8 +28,7 @@ class Board:
         board = open(fileName, 'r').readlines()
         self.board = [[0]*5 for i in range(5)]
         self.open = []
-        self.greenpoints = 0
-        self.bluepoints = 0
+        self.points = {'green': 0, 'blue': 0}
         
         # Parse the board by turning it into an array.
         y = 0
@@ -63,13 +62,35 @@ class Board:
 
         return None
     
+
+
     def capture(self, loc, team = None):
         try:
             self.open.remove(loc)
         except ValueError:
             pass
 
-        self.square_at(loc).team = team
+        square = self.square_at(loc)
+
+        # take over enemies square
+        if square.team and square.team != team:
+            self.points[square.team] -= square.value
+            self.points[team]        += square.value
+
+        # take over empty square
+        elif not square.team:
+            self.points[team] += square.value
+
+
+
+    def drop(self, loc, team = None):
+        square = self.square_at(loc)
+
+        # can only land in empty spots
+        if not square.team:
+            self.capture(loc, team)
+
+
 
     def blitz(self, src, dst, team = None):
         src, dst = self.square_at(src), self.square_at(dst)
@@ -94,10 +115,10 @@ class Board:
 
         # capture surrounding squares
         for dir in (0, 1), (1, 0), (-1, 0), (0, -1):
-            adj = self.square_at((dst.loc[0]+dir[0], dst.loc[1]+dir[0]))
+            adj = self.square_at((dst.loc[0]+dir[0], dst.loc[1]+dir[1]))
 
             if adj and adj.team:
-                adj.team = team
+                self.capture(adj.loc, team)
 
     def next_turn(self):
         if self.turn == 'green':
