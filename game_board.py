@@ -20,6 +20,8 @@ Created on Oct 29, 2012
 #        Returns the current state of the board as a string
 '''
 class Board:
+    turn = 'green'
+
     # initializer
     def __init__(self, fileName):
         #Initialize all the variables.
@@ -56,13 +58,24 @@ class Board:
     def square_at(self, loc):
         x, y = loc
 
-        if (x >= 0 and x < 5 and y >= 0 and y < 5):
+        if 0 <= x < 5 and 0 <= y < 5:
             return self.board[y][x]
-        else:
-            return None
+
+        return None
     
-    def capture(self, loc):
-        self.open.remove(loc)
+    def capture(self, loc, team = None):
+        try:
+            self.open.remove(loc)
+        except ValueError:
+            pass
+
+        self.square_at(loc).team = team
+
+    def next_turn(self):
+        if self.turn == 'green':
+            self.turn = 'blue'
+        else:
+            self.turn = 'green'
 
 class Square:
     def __init__(self, loc, value):

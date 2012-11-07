@@ -6,7 +6,7 @@ prune = None
 #prune must be reset to None before ab pruning commences
 #   calculate_abprune(string,string,Grid,int,int,int,Square) returns the heuristic value and location of the best choice
 #   for the next move of the game
-def calculate_abprune(curr_team, evil_team, board , depth, loc):
+def calculate_abprune(curr_team, evil_team, board , depth = 0, loc = None):
     # define constants
     global prune
     max_depth = 4

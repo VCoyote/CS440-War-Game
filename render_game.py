@@ -1,4 +1,5 @@
 import sys, pygame
+from math import floor
 
 # initialize pygame
 pygame.init()
@@ -10,10 +11,11 @@ grass    = pygame.image.load('img/grass.png')
 team1 = pygame.image.load('img/princess.png')
 team2 = pygame.image.load('img/bug.png')
 
-font = pygame.font.SysFont('Arial', 26, bold=True)
+font = pygame.font.SysFont('Arial', 28, bold=True)
 
 # constants
-square_rect = pygame.Rect(20, -20, 100, 82)
+square_rect  = pygame.Rect(20, -20, 100, 82)
+board_offset = (20, 20)
 
 # render a square
 def render_square(square):
@@ -25,14 +27,14 @@ def render_square(square):
     screen.blit(grass, pos)
 
     # render team
-    if square.team == 1:
+    if square.team == 'green':
         screen.blit(team1, pos)
-    elif square.team == 2:
+    elif square.team == 'blue':
         screen.blit(team2, pos)
 
     # render points
     pos = pos.move(sr.w/2, sr.h)
-    points = font.render(str(square.value), True, (100, 100, 100))
+    points = font.render(str(square.value), True, (30, 80, 0))
     screen.blit(points, pos)
 
 
@@ -41,3 +43,19 @@ def render_game(board):
     screen.fill((0, 0, 0))
     for square in board:
         render_square(square)
+
+# register click
+def click(pos, board):
+    sq = square_rect
+
+    # translate pixels to game board cells
+    x, y = pos
+    x, y = x - board_offset[0], y - board_offset[1] 
+    col, row = int(floor(x / sq.w)), int(floor(y / sq.h))
+
+    square = board.square_at((col, row))
+
+    # if player can make a move and does, do it
+    if square and board.turn == 'green':
+        board.capture((col, row), team='green')
+        board.next_turn()
