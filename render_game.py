@@ -1,6 +1,6 @@
 import sys, pygame
 from math import floor
-
+from game_board import BlitzError
 # initialize pygame
 pygame.init()
 screen = pygame.display.set_mode((1024, 800))
@@ -57,5 +57,8 @@ def click(pos, board):
 
     # if player can make a move and does, do it
     if square and board.turn == 'green':
-        board.drop((col, row), team='green')
+        try :
+            board.blitz((col,row), team='green')
+        except BlitzError :
+            board.drop((col, row), team='green')
         board.next_turn()

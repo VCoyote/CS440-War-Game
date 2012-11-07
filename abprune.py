@@ -9,9 +9,8 @@ prune = None
 def calculate_abprune(curr_team, evil_team, board , depth = 0, loc = None):
     # define constants
     global prune
-    max_depth = 4
+    max_depth = 3
     max_team = 'green'
-    best_square = None
     # make deep copy of the board to work with, so earlier paths dont alter new paths
     grid = deepcopy(board)
 
@@ -23,7 +22,8 @@ def calculate_abprune(curr_team, evil_team, board , depth = 0, loc = None):
                 return retval
             else:
                 retval = (calculate_abprune(curr_team, evil_team, grid, depth+1, next) for next in grid.open)
-                return min(x for x in retval if x != None)
+                retval = min(x for x in retval if x != None)
+                return retval
     # loc refers to the square in board, but we want to equivalent square in grid to alter
     square = grid.square_at(loc)
     # Mark the location as captured
@@ -57,16 +57,17 @@ def calculate_abprune(curr_team, evil_team, board , depth = 0, loc = None):
                     evil.team = curr_team
             break
     #we just took this square, mark it as current players and add its value to their score
-    if curr_team == max_team:
-        grid.points['green'] += square.value
-    else:
-        grid.points['blue'] += square.value
-    square.team = curr_team
+    # if curr_team == max_team:
+    #     grid.points['green'] += square.value
+    # else:
+    #     grid.points['blue'] += square.value
+    # square.team = curr_team
     if depth >= max_depth or len(grid.open) == 0:
         # return [heuristic value, square used,max_team value, min_team value]
         # max_team wants (max_value - min_value) to be as large as possible, min_team wants it to be as small as possible
         return [grid.points['green'] - grid.points['blue'], square.loc]
     else:
+        best_square = None
         if curr_team == max_team:
             #search through each possible next move 
             for next in grid.open:
@@ -76,16 +77,18 @@ def calculate_abprune(curr_team, evil_team, board , depth = 0, loc = None):
                 #if the value is above prune (and if prune has been set yet)
                 #then min will never pick this route, throw it out
                 if prune:
-                    if retval[0] < prune:
-                        return None
+                    if retval[0] > prune:
+                        a= None
+                        #return None
                 if not best_square:
                     best_square = retval
                 #if the result is higher than our previous max, make it the new max
-                if retval[0] > best_square[0]:
+                if retval[0] < best_square[0]:
                     best_square = retval
             #our new best choice is where we prune from
             if best_square:
                 prune = best_square[0]
+                best_square[1]=loc
             return best_square
         else:            
             for next in grid.open:
@@ -95,14 +98,17 @@ def calculate_abprune(curr_team, evil_team, board , depth = 0, loc = None):
                 #if the value is below prune, max will never pick it, so throw it out
     
                 if prune:
-                    if retval[0] > prune:
-                        return None
+                    if retval[0] < prune:
+                        a = None
+                        #return None
                 if not best_square:
                     best_square = retval
+                    print 'wha'
                 #if the result is lower than our previous min, make it the new min
-                if retval[0] < best_square[0]:
+                if retval[0] > best_square[0]:
                     best_square = retval
             #our selection is the new prune
             if best_square:
                 prune = best_square[0]
+                best_square[1] = loc
             return best_square

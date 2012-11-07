@@ -1,5 +1,5 @@
 #!/usr/bin/env python2
-from game_board import Board
+from game_board import Board, BlitzError
 from render_game import render_game, pygame, clock, click
 from minimax import calculate_minimax
 from abprune import calculate_abprune
@@ -33,7 +33,10 @@ while True:
         move = calculate_abprune('blue', 'green', board)
         to_capture = move[1]
 
-        board.capture(to_capture, team='blue')
+        try: 
+            board.blitz(to_capture,current_turn)
+        except BlitzError:
+            board.drop(to_capture,current_turn)
         board.next_turn()
 
     render_game(board)

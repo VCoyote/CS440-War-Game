@@ -16,7 +16,10 @@ def calculate_minimax(curr_team, evil_team, board , depth = 0, loc = None):
         if curr_team == max_team:
             return max(calculate_minimax(curr_team, evil_team, grid, depth+1, next) for next in grid.open)
         else:
-            return min(calculate_minimax(curr_team, evil_team, grid, depth+1, next) for next in grid.open)
+            retval = min(calculate_minimax(curr_team, evil_team, grid, depth+1, next) for next in grid.open)
+            print retval
+            return retval
+
     # Mark the location as captured
     # loc refers to the square in board, but we want to equivalent square in grid to alter
     square = grid.square_at(loc)
@@ -49,20 +52,24 @@ def calculate_minimax(curr_team, evil_team, board , depth = 0, loc = None):
                     evil.team = curr_team
             break
     # we just took this square, mark it as current players and add its value to their score
-    if curr_team == max_team:
-        grid.points['green'] += square.value
-    else:
-        grid.points['blue'] += square.value
-    square.team = curr_team
+
+    # if curr_team == max_team:
+    #     grid.points['green'] += square.value
+    # else:
+    #     grid.points['blue'] += square.value
+    # square.team = curr_team
     if depth >= max_depth or len(grid.open) == 0:
         # return [heuristic value, square used,max_team value, min_team value]
         # max_team wants (max_value - min_value) to be as large as possible, min_team wants it to be as small as possible
-        return [grid.points['green'] - grid.points['blue'], square.loc]
+        
+        retval = [grid.points['green'] - grid.points['blue'], square.loc]
+        return retval
     else:
         if curr_team == max_team:
-            retval = max(calculate_minimax(evil_team, curr_team, grid, depth+1, next) for next in grid.open)
+            retval = min(calculate_minimax(evil_team, curr_team, grid, depth+1, next) for next in grid.open)
+            retval[1] = loc
             return retval
         else:
-            retval = min(calculate_minimax(evil_team, curr_team, grid, depth+1, next) for next in grid.open)
+            retval = max(calculate_minimax(evil_team, curr_team, grid, depth+1, next) for next in grid.open)
+            retval[1] = loc
             return retval
-
