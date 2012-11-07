@@ -71,6 +71,34 @@ class Board:
 
         self.square_at(loc).team = team
 
+    def blitz(self, src, dst, team = None):
+        src, dst = self.square_at(src), self.square_at(dst)
+
+        # Requirements to blitz:
+        #   1. squares exist
+        if not self.square_at(src) or not self.square_at(dst):
+            raise Error('Non-existing blitzing squares')
+
+        #   2. squares are adjacent
+        col_diff = abs(dst.loc[0] - src.loc[0])
+        row_diff = abs(dst.loc[1] - src.loc[1])
+        if col_diff != 1 or row_diff != 1:
+            raise Error('Blitzing too far')
+
+        #   3. destination square is not occupied
+        if dst.team:
+            raise Error('Blitzing destination occupied')
+
+        # do the blitz
+        self.capture(dst, team=team)
+
+        # capture surrounding squares
+        for dir in (0, 1), (1, 0), (-1, 0), (0, -1):
+            adj = self.square_at((dst.loc[0]+dir[0], dst.loc[1]+dir[0]))
+
+            if adj and adj.team:
+                adj.team = team
+
     def next_turn(self):
         if self.turn == 'green':
             self.turn = 'blue'

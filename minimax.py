@@ -5,9 +5,9 @@
 from copy import deepcopy
 #   calculate_minimax(string,string,Grid,int,int,int,Square) returns the heuristic value and location of the best choice
 #   for the next move of the game
-def calculate_minimax(curr_team, evil_team, board , depth, loc):
+def calculate_minimax(curr_team, evil_team, board , depth = 0, loc = None):
     # define constants
-    max_depth = 1
+    max_depth = 3
     max_team = 'green'
     # make deep copy of the board to work with, so earlier paths don't alter new paths
     grid = deepcopy(board)
