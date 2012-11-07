@@ -6,10 +6,9 @@ prune = None
 #prune must be reset to None before ab pruning commences
 #   calculate_abprune(string,string,Grid,int,int,int,Square) returns the heuristic value and location of the best choice
 #   for the next move of the game
-def calculate_abprune(curr_team, evil_team, board , depth = 0, loc = None):
+def calculate_abprune(curr_team, evil_team, board, max_depth, depth = 0, loc = None, alpha = [-100000, None], beta = [100000, None]):
     # define constants
     global prune
-    max_depth = 3
     max_team = 'green'
     # make deep copy of the board to work with, so earlier paths dont alter new paths
     grid = deepcopy(board)
@@ -18,11 +17,10 @@ def calculate_abprune(curr_team, evil_team, board , depth = 0, loc = None):
     if depth == 0:
             prune = None
             if curr_team == max_team:
-                retval = max(calculate_abprune(curr_team, evil_team, grid, depth+1, next) for next in grid.open)
+                retval = max(calculate_abprune(curr_team, evil_team, grid, max_depth, depth+1, next) for next in grid.open)
                 return retval
             else:
-                retval = (calculate_abprune(curr_team, evil_team, grid, depth+1, next) for next in grid.open)
-                retval = min(x for x in retval if x != None)
+                retval = min(calculate_abprune(curr_team, evil_team, grid, max_depth, depth+1, next) for next in grid.open)
                 return retval
     # loc refers to the square in board, but we want to equivalent square in grid to alter
     square = grid.square_at(loc)
@@ -67,48 +65,17 @@ def calculate_abprune(curr_team, evil_team, board , depth = 0, loc = None):
         # max_team wants (max_value - min_value) to be as large as possible, min_team wants it to be as small as possible
         return [grid.points['green'] - grid.points['blue'], square.loc]
     else:
-        best_square = None
-        if curr_team == max_team:
-            #search through each possible next move 
+        if curr_team != max_team:
             for next in grid.open:
-                retval = calculate_abprune(evil_team, curr_team, grid, depth+1, next)
-                if not retval:
-                    continue
-                #if the value is above prune (and if prune has been set yet)
-                #then min will never pick this route, throw it out
-                if prune:
-                    if retval[0] > prune:
-                        a= None
-                        #return None
-                if not best_square:
-                    best_square = retval
-                #if the result is higher than our previous max, make it the new max
-                if retval[0] < best_square[0]:
-                    best_square = retval
-            #our new best choice is where we prune from
-            if best_square:
-                prune = best_square[0]
-                best_square[1]=loc
-            return best_square
-        else:            
+                alpha = max(alpha,calculate_abprune(evil_team,curr_team, grid, max_depth, depth+1, next, alpha, beta))
+                if beta <= alpha:
+                    break
+            alpha[1] = loc
+            return alpha
+        else:
             for next in grid.open:
-                retval = calculate_abprune(evil_team, curr_team, grid, depth+1, next)
-                if not retval:
-                    continue
-                #if the value is below prune, max will never pick it, so throw it out
-    
-                if prune:
-                    if retval[0] < prune:
-                        a = None
-                        #return None
-                if not best_square:
-                    best_square = retval
-                    print 'wha'
-                #if the result is lower than our previous min, make it the new min
-                if retval[0] > best_square[0]:
-                    best_square = retval
-            #our selection is the new prune
-            if best_square:
-                prune = best_square[0]
-                best_square[1] = loc
-            return best_square
+                beta = min(beta,calculate_abprune(evil_team,curr_team, grid, max_depth, depth+1, next, alpha, beta))
+                if beta <= alpha:
+                    break
+            beta[1] = loc
+            return beta

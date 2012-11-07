@@ -21,17 +21,27 @@ if DEBUG_AI:
 while True:
     current_turn = board.turn
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            sys.exit()
-        elif event.type == pygame.MOUSEBUTTONDOWN and event.button:
-            click(event.pos, board)
+    #for event in pygame.event.get():
+    #    if event.type == pygame.QUIT:
+    #        sys.exit()
+    #    elif event.type == pygame.MOUSEBUTTONDOWN and event.button:
+    #        click(event.pos, board)
 
 
     # if ai can make a move, do it
     if current_turn == 'blue':
-        print('ai')
-        move = calculate_abprune('blue', 'green', board, 3)
+        depth = 5 - (len(board.open)/10)
+        move = calculate_abprune('blue', 'green', board, depth )
+        to_capture = move[1]
+
+        try: 
+            board.blitz(to_capture,current_turn)
+        except BlitzError:
+            board.drop(to_capture,current_turn)
+        board.next_turn()
+    else:
+        depth = 5 - (len(board.open)/10)
+        move = calculate_abprune('green', 'blue', board, depth)
         to_capture = move[1]
 
         try: 
@@ -43,4 +53,4 @@ while True:
     render_game(board)
 	
     pygame.display.flip()
-    clock.tick(30)
+    clock.tick(300)
