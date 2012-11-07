@@ -57,5 +57,5 @@ def click(pos, board):
 
     # if player can make a move and does, do it
     if square and board.turn == 'green':
-        board.capture((col, row), team='green')
+        board.drop((col, row), team='green')
         board.next_turn()
