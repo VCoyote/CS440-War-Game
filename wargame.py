@@ -37,6 +37,6 @@ while True:
         board.next_turn()
 
     render_game(board)
-
+	
     pygame.display.flip()
     clock.tick(30)
