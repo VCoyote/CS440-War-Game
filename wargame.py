@@ -29,6 +29,7 @@ while True:
 
     # if ai can make a move, do it
     if current_turn == 'blue':
+        print('ai')
         move = calculate_abprune('blue', 'green', board)
         to_capture = move[1]
 

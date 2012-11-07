@@ -20,7 +20,7 @@ def calculate_minimax(curr_team, evil_team, board , depth = 0, loc = None):
     # Mark the location as captured
     # loc refers to the square in board, but we want to equivalent square in grid to alter
     square = grid.square_at(loc)
-    grid.capture(loc)
+    grid.capture(loc, curr_team)
     # we treat each square as a Para-Drop, then we check to see if it has any neighbors that belong
     # to the current team...it is more advantageous to Death Blitz whenever possible
     x = loc[0]

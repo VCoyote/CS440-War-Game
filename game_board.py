@@ -65,6 +65,7 @@ class Board:
 
 
     def capture(self, loc, team = None):
+        ''' give a square to a team and do all internal bookkeeping '''
         try:
             self.open.remove(loc)
         except ValueError:
@@ -81,9 +82,11 @@ class Board:
         elif not square.team:
             self.points[team] += square.value
 
+        square.team = team
 
 
     def drop(self, loc, team = None):
+        ''' drop a team onto an empty square '''
         square = self.square_at(loc)
 
         # can only land in empty spots
@@ -93,6 +96,7 @@ class Board:
 
 
     def blitz(self, src, dst, team = None):
+        ''' move team onto an empty adjacent square, taking over adjacent enemy squares '''
         src, dst = self.square_at(src), self.square_at(dst)
 
         # Requirements to blitz:
