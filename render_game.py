@@ -3,7 +3,7 @@ from math import floor
 
 # initialize pygame
 pygame.init()
-screen = pygame.display.set_mode((570, 600))
+screen = pygame.display.set_mode((770, 800))
 clock = pygame.time.Clock()
 
 # load assets

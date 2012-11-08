@@ -15,11 +15,11 @@ def debug_ai(board, ai_calculate):
         board.capture((x,y))
         board.greenpoints += board.board[y][x].value
         for neighbor in (x+1,y),(x-1,y),(x,y+1),(x,y-1):
-            if neighbor[0] < 5 and neighbor[0] >=0 and neighbor[1] <5 and neighbor[1] >=0:
+            if neighbor[0] < board.size and neighbor[0] >=0 and neighbor[1] < board.size and neighbor[1] >=0:
                 t = board.square_at(neighbor)
                 if t.team == 'green':       
                     for neighbor in (x+1,y),(x-1,y),(x,y+1),(x,y-1):
-                        if neighbor[0] < 5 and neighbor[0] >=0 and neighbor[1] <5 and neighbor[1] >=0:
+                        if neighbor[0] < board.size and neighbor[0] >=0 and neighbor[1] < board.size and neighbor[1] >=0:
                             temp = board.square_at(neighbor)
                             if temp.team == 'blue':
                                 temp.team = 'green'
@@ -39,11 +39,11 @@ def debug_ai(board, ai_calculate):
         board.capture((x,y))
         board.bluepoints += board.board[y][x].value
         for neighbor in (x+1,y),(x-1,y),(x,y+1),(x,y-1):
-            if neighbor[0] < 5 and neighbor[0] >=0 and neighbor[1] <5 and neighbor[1] >=0:
+            if neighbor[0] < board.size and neighbor[0] >=0 and neighbor[1] < board.size and neighbor[1] >=0:
                 t = board.square_at(neighbor)
                 if t.team == 'blue':       
                     for neighbor in (x+1,y),(x-1,y),(x,y+1),(x,y-1):
-                        if neighbor[0] < 5 and neighbor[0] >=0 and neighbor[1] <5 and neighbor[1] >=0:
+                        if neighbor[0] < board.size and neighbor[0] >=0 and neighbor[1] < board.size and neighbor[1] >=0:
                             temp = board.square_at(neighbor)
                             if temp.team == 'green':
                                 temp.team = 'blue'

@@ -24,17 +24,20 @@ class Board:
 
     # initializer
     def __init__(self, fileName):
-        #Initialize all the variables.
+        # initialize variables
         board = open(fileName, 'r').readlines()
-        self.board = [[0]*5 for i in range(5)]
+        self.size = size = len(board[0].split())
+
+        self.board = [[None]*size for i in range(size)]
         self.open = []
         self.points = {'green': 0, 'blue': 0}
-        
-        # Parse the board by turning it into an array.
+
+        # parse the board by turning it into an array.
         y = 0
         for line in board:
             x = 0
             for value in line.split():
+                print((x, y))
                 self.board[y][x] = Square((x, y), int(value))
                 self.open.append((x,y))
                 x += 1
@@ -57,7 +60,7 @@ class Board:
     def square_at(self, loc):
         x, y = loc
 
-        if 0 <= x < 5 and 0 <= y < 5:
+        if 0 <= x < self.size and 0 <= y < self.size:
             return self.board[y][x]
 
         return None

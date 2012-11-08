@@ -1,5 +1,5 @@
 #  Assumptions:
-# Grid contains a 5 by 5 array of Squares, each of which has a value, a team, and a location (and pointers to adjacent Squares?)
+# Grid contains a n*n array of Squares, each of which has a value, a team, and a location (and pointers to adjacent Squares?)
 # Grid has the function square_at((int,int), which returns a reference to the Square a that location in the grid
 from copy import deepcopy
 prune = None
