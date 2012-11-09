@@ -65,12 +65,12 @@ while board.open:
     nodes_this_time = return_nodes_this_time_ab()
     nodes_this_time_array.append(nodes_this_time)
     total_nodes += nodes_this_time
-    print str(nodes_this_time) + current_turn
+    print(str(nodes_this_time) + current_turn)
 	
     pygame.display.flip()
     clock.tick(30)
-print total_time
-print board.points
-print total_nodes
-print nodes_this_time_array
+print(total_time)
+print(board.points)
+print(total_nodes)
+print(nodes_this_time_array)
 
