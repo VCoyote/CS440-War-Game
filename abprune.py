@@ -2,13 +2,21 @@
 # Grid contains a n*n array of Squares, each of which has a value, a team, and a location (and pointers to adjacent Squares?)
 # Grid has the function square_at((int,int), which returns a reference to the Square a that location in the grid
 from copy import deepcopy
+
+nodes_this_time = 0
+def return_nodes_this_time_ab():
+    global nodes_this_time
+    return nodes_this_time
+
 prune = None
 #prune must be reset to None before ab pruning commences
 #   calculate_abprune(string,string,Grid,int,int,int,Square) returns the heuristic value and location of the best choice
 #   for the next move of the game
-def calculate_abprune(curr_team, evil_team, board, max_depth, depth = 0, loc = None, alpha = [-100000, None], beta = [100000, None]):
+def calculate_abprune(curr_team, evil_team, board, max_depth = 3, depth = 0, loc = None, alpha = [-100000, None], beta = [100000, None]):
     # define constants
     global prune
+    global nodes_this_time
+    nodes_this_time += 1
     max_team = 'green'
     # make deep copy of the board to work with, so earlier paths dont alter new paths
     grid = deepcopy(board)
@@ -16,6 +24,7 @@ def calculate_abprune(curr_team, evil_team, board, max_depth, depth = 0, loc = N
     # root search node hasn't altered anything yet
     if depth == 0:
             prune = None
+            nodes_this_time = 1
             if curr_team == max_team:
                 retval = max(calculate_abprune(curr_team, evil_team, grid, max_depth, depth+1, next) for next in grid.open)
                 return retval

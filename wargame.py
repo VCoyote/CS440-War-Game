@@ -4,7 +4,7 @@ from game_board import Board, BlitzError
 from minimax import calculate_minimax
 from abprune import calculate_abprune
 from debug_ai import debug_ai
-import sys, argparse
+import sys, argparse, time
 
 # constants
 DEBUG_AI = False
@@ -27,6 +27,10 @@ if DEBUG_AI:
 
     # debug abpruning
     debug_ai(board, calculate_abprune)
+#data constants
+num_moves = {'green' : 0, 'blue' : 0}
+total_nodes = {'green' : 0, 'blue' : 0}
+total_time = 0
 
 while board.open:
     current_turn = board.turn
@@ -44,9 +48,10 @@ while board.open:
 
     # if ai can make a move, do it
     if current_turn == 'blue':
-        move = calculate_abprune('blue', 'green', board, 3)
+        temp_time = time.clock()
+        move = calculate_minimax('blue', 'green', board)
         to_capture = move[1]
-
+        total_time += time.clock() - temp_time
         try: 
             board.blitz(to_capture, current_turn)
         except BlitzError:
@@ -62,5 +67,6 @@ while board.open:
     clock.tick(30)
 
 # let user see score until a button is pressed
+print total_time
 pygame.event.set_blocked(pygame.MOUSEMOTION)
 pygame.event.wait()

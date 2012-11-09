@@ -5,19 +5,26 @@
 from copy import deepcopy
 #   calculate_minimax(string,string,Grid,int,int,int,Square) returns the heuristic value and location of the best choice
 #   for the next move of the game
+nodes_this_time = 0
+def return_nodes_this_time():
+    global nodes_this_time
+    return nodes_this_time
+
 def calculate_minimax(curr_team, evil_team, board , depth = 0, loc = None):
     # define constants
+    global nodes_this_time
+    nodes_this_time += 1
     max_depth = 3
     max_team = 'green'
     # make deep copy of the board to work with, so earlier paths don't alter new paths
     grid = deepcopy(board)
     # root search node hasn't altered anything yet
     if depth == 0:
+        nodes_this_time = 1
         if curr_team == max_team:
             return max(calculate_minimax(curr_team, evil_team, grid, depth+1, next) for next in grid.open)
         else:
             retval = min(calculate_minimax(curr_team, evil_team, grid, depth+1, next) for next in grid.open)
-            print retval
             return retval
 
     # Mark the location as captured
